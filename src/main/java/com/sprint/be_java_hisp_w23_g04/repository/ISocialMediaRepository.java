@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ISocialMediaRepository {
     List<User> findAllUsers();
+    User findUserById(Integer id);
+    void unfollowUser(int userId, int unfollowedUserId);
 }

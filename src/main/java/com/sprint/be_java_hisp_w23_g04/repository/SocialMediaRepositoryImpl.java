@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Repository
@@ -51,5 +52,23 @@ public class SocialMediaRepositoryImpl implements ISocialMediaRepository {
 
     public List<User> findAllUsers(){
         return this.users;
+    }
+
+    public User findUserById(Integer id){
+        return this.users.stream().filter(user -> Objects.equals(user.getId(), id)).findFirst().orElse(null);
+    }
+
+    public void unfollowUser(int userId, int unfollowedUserId){
+        List<User> newFollowed = findUserById(userId).getFollowed().stream().filter(user -> user.getId() != unfollowedUserId).toList();
+        List<User> newFollowers = findUserById(unfollowedUserId).getFollowers().stream().filter(user -> user.getId() != userId).toList();
+
+        User user = findUserById(userId);
+        User unfollowedUser = findUserById(unfollowedUserId);
+
+        unfollowedUser.setFollowers(newFollowers);
+        user.setFollowed(newFollowed);
+
+        users.set(users.indexOf(findUserById(userId)), user);
+        users.set(users.indexOf(unfollowedUser), unfollowedUser);
     }
 }
